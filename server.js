@@ -96,9 +96,9 @@ wss.on('connection', (ws) => {
       // ── JOIN LOBBY ──
       case 'join': {
         const lobby = lobbies.get(msg.code);
-        if (!lobby) { ws.send(JSON.stringify({ type: 'error', msg: 'Лобби не найдено' })); break; }
-        if (lobby.started) { ws.send(JSON.stringify({ type: 'error', msg: 'Игра уже началась' })); break; }
-        if (lobby.clients.size >= 8) { ws.send(JSON.stringify({ type: 'error', msg: 'Лобби заполнено' })); break; }
+        if (!lobby) { ws.send(JSON.stringify({ type: 'error', msg: 'Lobby not found' })); break; }
+        if (lobby.started) { ws.send(JSON.stringify({ type: 'error', msg: 'Game already started' })); break; }
+        if (lobby.clients.size >= 8) { ws.send(JSON.stringify({ type: 'error', msg: 'Lobby is full' })); break; }
 
         lobby.clients.set(clientId, {
           id: clientId, ws,
