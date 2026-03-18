@@ -419,52 +419,52 @@
     <div id="menu-title">DARKZONE</div>
     <div id="menu-subtitle">top-down flashlight shooter</div>
     <div class="menu-btns-col">
-      <button class="menu-big-btn" onclick="showPage('page-solo')">ОДИНОЧНАЯ</button>
-      <button class="menu-big-btn" onclick="showPage('page-multi')">МУЛЬТИПЛЕЕР</button>
-      <button class="menu-small-btn" onclick="openScores()">СЧЁТ</button>
+      <button class="menu-big-btn" onclick="showPage('page-solo')">SOLO</button>
+      <button class="menu-big-btn" onclick="showPage('page-multi')">MULTIPLAYER</button>
+      <button class="menu-small-btn" onclick="openScores()">SCORES</button>
     </div>
   </div>
 
   <!-- PAGE 2a: Solo — difficulty -->
   <div class="menu-page hidden" id="page-solo">
-    <div class="page-title">ОДИНОЧНАЯ</div>
-    <div id="difficulty-label">сложность</div>
+    <div class="page-title">SOLO</div>
+    <div id="difficulty-label">difficulty</div>
     <div id="difficulty-btns">
       <button class="diff-btn" data-diff="easy"   onclick="selectDiff(this)">EASY</button>
       <button class="diff-btn selected" data-diff="normal" onclick="selectDiff(this)">NORMAL</button>
       <button class="diff-btn" data-diff="hard"   onclick="selectDiff(this)">HARD</button>
     </div>
     <div class="menu-btns-row" style="margin-top:36px">
-      <button class="res-btn" onclick="showPage('page-mode')">НАЗАД</button>
-      <button class="res-btn primary" onclick="startGame()">ИГРАТЬ</button>
+      <button class="res-btn" onclick="showPage('page-mode')">BACK</button>
+      <button class="res-btn primary" onclick="startGame()">PLAY</button>
     </div>
   </div>
 
   <!-- PAGE 2b: Multiplayer -->
   <div class="menu-page hidden" id="page-multi">
-    <div class="page-title">МУЛЬТИПЛЕЕР</div>
+    <div class="page-title">MULTIPLAYER</div>
     <div id="mp-name-wrap">
-      <input id="mp-name" type="text" maxlength="12" placeholder="ИМЯ" value="Player" />
+      <input id="mp-name" type="text" maxlength="12" placeholder="NAME" value="Player" />
     </div>
     <div class="menu-btns-col" style="margin-top:20px">
-      <button class="menu-big-btn" onclick="showPage('page-create')">СОЗДАТЬ ЛОББИ</button>
-      <button class="menu-big-btn" onclick="showPage('page-join')">ПОДКЛЮЧИТЬСЯ</button>
+      <button class="menu-big-btn" onclick="showPage('page-create')">CREATE LOBBY</button>
+      <button class="menu-big-btn" onclick="showPage('page-join')">JOIN LOBBY</button>
     </div>
-    <button class="menu-small-btn" style="margin-top:16px" onclick="showPage('page-mode')">НАЗАД</button>
+    <button class="menu-small-btn" style="margin-top:16px" onclick="showPage('page-mode')">BACK</button>
   </div>
 
   <!-- PAGE 3a: Create lobby -->
   <div class="menu-page hidden" id="page-create">
-    <div class="page-title">СОЗДАТЬ ЛОББИ</div>
+    <div class="page-title">CREATE LOBBY</div>
     <div class="lobby-section">
-      <div class="lobby-label">РЕЖИМ</div>
+      <div class="lobby-label">MODE</div>
       <div class="lobby-btns-row">
-        <button class="diff-btn selected" data-mode="coop" onclick="selectMode(this)">КООП</button>
+        <button class="diff-btn selected" data-mode="coop" onclick="selectMode(this)">COOP</button>
         <button class="diff-btn" data-mode="pvp" onclick="selectMode(this)">PVP</button>
       </div>
     </div>
-    <div class="lobby-section">
-      <div class="lobby-label">СЛОЖНОСТЬ</div>
+    <div class="lobby-section" id="lobby-diff-section">
+      <div class="lobby-label">DIFFICULTY</div>
       <div id="lobby-diff-btns">
         <button class="diff-btn" data-diff="easy"   onclick="selectLobbyDiff(this)">EASY</button>
         <button class="diff-btn selected" data-diff="normal" onclick="selectLobbyDiff(this)">NORMAL</button>
@@ -472,41 +472,41 @@
       </div>
     </div>
     <div class="menu-btns-row" style="margin-top:28px">
-      <button class="res-btn" onclick="showPage('page-multi')">НАЗАД</button>
-      <button class="res-btn primary" onclick="createLobby()">СОЗДАТЬ</button>
+      <button class="res-btn" onclick="showPage('page-multi')">BACK</button>
+      <button class="res-btn primary" onclick="createLobby()">CREATE</button>
     </div>
   </div>
 
   <!-- PAGE 3b: Join lobby -->
   <div class="menu-page hidden" id="page-join">
-    <div class="page-title">ПОДКЛЮЧИТЬСЯ</div>
+    <div class="page-title">JOIN LOBBY</div>
     <div id="join-code-wrap">
       <input id="join-code" type="text" maxlength="4" placeholder="0000" inputmode="numeric" />
       <div id="join-error"></div>
     </div>
     <div class="menu-btns-row" style="margin-top:28px">
-      <button class="res-btn" onclick="showPage('page-multi')">НАЗАД</button>
-      <button class="res-btn primary" onclick="joinLobby()">ВОЙТИ</button>
+      <button class="res-btn" onclick="showPage('page-multi')">BACK</button>
+      <button class="res-btn primary" onclick="joinLobby()">JOIN</button>
     </div>
   </div>
 
   <!-- PAGE 4: Lobby room -->
   <div class="menu-page hidden" id="page-lobby">
-    <div class="page-title">ЛОББИ <span id="lobby-code-display">----</span></div>
+    <div class="page-title">LOBBY <span id="lobby-code-display">----</span></div>
     <div id="lobby-mode-display"></div>
     <div id="lobby-players-list"></div>
     <div id="lobby-msg"></div>
     <div class="menu-btns-row" style="margin-top:20px">
-      <button class="res-btn" onclick="leaveLobby()">ВЫЙТИ</button>
-      <button class="res-btn primary" id="start-btn" onclick="startMulti()" style="display:none">СТАРТ</button>
+      <button class="res-btn" onclick="leaveLobby()">LEAVE</button>
+      <button class="res-btn primary" id="start-btn" onclick="startMulti()" style="display:none">START</button>
     </div>
   </div>
 </div>
 
 <div id="scores-overlay">
-  <div id="scores-title">Leaderboard</div>
+  <div id="scores-title">LEADERBOARD</div>
   <div id="scores-list"></div>
-  <button id="scores-close" onclick="closeScores()">НАЗАД</button>
+  <button id="scores-close" onclick="closeScores()">BACK</button>
 </div>
 
 <div id="hud">
@@ -2199,6 +2199,9 @@ function selectMode(btn) {
   document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedMode = btn.dataset.mode;
+  // Hide difficulty for PVP — no bots
+  const diffSection = document.getElementById('lobby-diff-section');
+  if (diffSection) diffSection.style.display = selectedMode === 'pvp' ? 'none' : '';
 }
 
 function applyDifficulty(diff) {
@@ -2267,13 +2270,13 @@ function connectWS() {
     if (ws && ws.readyState === WebSocket.OPEN) { resolve(); return; }
     ws = new WebSocket(getWsUrl());
     ws.onopen = () => resolve();
-    ws.onerror = () => reject(new Error('Нет соединения с сервером'));
+    ws.onerror = () => reject(new Error('Cannot connect to server'));
     ws.onmessage = (e) => handleServerMsg(JSON.parse(e.data));
     ws.onclose = () => {
       if (multiMode) {
         multiMode = false;
         gameOver = true;
-        alert('Соединение потеряно');
+        alert('Connection lost');
         goMenu();
       }
     };
@@ -2299,7 +2302,7 @@ async function createLobby() {
 
 async function joinLobby() {
   const code = document.getElementById('join-code').value.trim();
-  if (code.length !== 4) { document.getElementById('join-error').textContent = 'Введи 4 цифры'; return; }
+  if (code.length !== 4) { document.getElementById('join-error').textContent = 'Enter a 4-digit code'; return; }
   document.getElementById('join-error').textContent = '';
   try {
     await connectWS();
@@ -2322,22 +2325,42 @@ function startMulti() {
 
 function renderLobby(lobby) {
   document.getElementById('lobby-code-display').textContent = lobby.code;
-  document.getElementById('lobby-mode-display').textContent =
-    (lobby.mode === 'pvp' ? 'PVP' : 'КООП') + ' · ' + lobby.difficulty.toUpperCase();
+  const modeLabel = lobby.mode === 'pvp' ? 'PVP' : 'COOP';
+  const diffLabel = lobby.mode === 'pvp' ? '' : ' · ' + lobby.difficulty.toUpperCase();
+  document.getElementById('lobby-mode-display').textContent = modeLabel + diffLabel;
+
   const list = document.getElementById('lobby-players-list');
   list.innerHTML = '';
   lobby.players.forEach(p => {
     const row = document.createElement('div');
     const isMe = p.id === myClientId;
     row.className = 'lobby-player-row' + (isMe ? ' me' : '');
-    row.innerHTML = `<span>${p.name}</span><span class="lobby-player-host">${p.isHost ? 'ХОСТ' : ''}</span>`;
+    row.innerHTML = `<span>${p.name}</span><span class="lobby-player-host">${p.isHost ? 'HOST' : ''}</span>`;
     list.appendChild(row);
   });
-  // Show start button only for host
+
   const startBtn = document.getElementById('start-btn');
   if (startBtn) startBtn.style.display = isHost ? 'block' : 'none';
-  document.getElementById('lobby-msg').textContent =
-    isHost ? 'Ожидание игроков...' : 'Ожидание хоста...';
+
+  const isPvp = lobby.mode === 'pvp';
+  const count = lobby.players.length;
+  let msg = '';
+  if (isHost) {
+    if (isPvp && count < 2) msg = 'Need at least 2 players to start PVP';
+    else msg = 'Waiting for players...';
+  } else {
+    msg = 'Waiting for host to start...';
+  }
+  document.getElementById('lobby-msg').textContent = msg;
+
+  // Disable start button if PvP and less than 2 players
+  if (startBtn && isPvp && count < 2) {
+    startBtn.disabled = true;
+    startBtn.style.opacity = '0.3';
+  } else if (startBtn) {
+    startBtn.disabled = false;
+    startBtn.style.opacity = '1';
+  }
 }
 
 function handleServerMsg(msg) {
