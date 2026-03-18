@@ -1,0 +1,16 @@
+{
+  "name": "darkzone-server",
+  "version": "1.0.0",
+  "description": "DARKZONE multiplayer server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
