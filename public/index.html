@@ -45,7 +45,10 @@
     align-items: flex-end;
     gap: 2px;
     z-index: 100;
-    pointer-events: none;
+    pointer-events: all;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    padding: 8px;
   }
   #ammo-cur {
     font-size: 22px;
@@ -382,21 +385,48 @@
     transition: transform 0.05s;
   }
   #reload-btn {
+    display: none;
+  }
+  #shoot-btn {
     position: absolute;
-    bottom: 44px;
-    right: 168px;
-    width: 56px; height: 56px;
+    bottom: 18px;
+    right: 140px;
+    width: 110px; height: 110px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,60,60,0.15);
+    border: 2px solid rgba(255,80,80,0.5);
     pointer-events: all;
     touch-action: none;
     display: flex; align-items: center; justify-content: center;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,120,120,0.8);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: background 0.08s;
+  }
+  #shoot-btn.pressed {
+    background: rgba(255,60,60,0.4);
+    border-color: rgba(255,120,120,0.9);
+  }
+  #fullscreen-btn {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 600;
+    background: transparent;
+    border: 1px solid #333;
+    color: #555;
     font-family: 'Courier New', monospace;
     font-size: 9px;
-    letter-spacing: 1px;
+    letter-spacing: 3px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    text-transform: uppercase;
+    pointer-events: all;
   }
+  #fullscreen-btn:hover { color: #aaa; border-color: #666; }
   #kill-counter {
     position: fixed;
     top: 14px;
@@ -515,7 +545,7 @@
   <span class="hud-val" id="hp-val">100</span>
   <span class="hud-val" id="stamina-val">100</span>
 </div>
-<div class="hud-ammo">
+<div class="hud-ammo" onclick="startReload()" title="Reload">
   <span id="ammo-cur">30</span>
   <span id="ammo-mags">1</span>
 </div>
@@ -554,8 +584,11 @@
     <div class="joy-base"></div>
     <div class="joy-knob" id="knob-look"></div>
   </div>
+  <div id="shoot-btn">FIRE</div>
   <div id="reload-btn">RLD</div>
 </div>
+
+<button id="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; FULL</button>
 
 <script>
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -763,9 +796,10 @@ function initGame(keepPosition = false) {
   for (let i = 0; i < diffMags; i++) spawnAmmoPickup();
   for (let i = 0; i < diffMedkits; i++) spawnMedkit();
 
-  // Spawn enemies far from player
-  // Spawn initial enemies
-  for (let e = 0; e < ENEMY_COUNT; e++) spawnEnemy();
+  // Spawn initial enemies (not in PVP)
+  if (!(multiMode && multiGameMode === 'pvp')) {
+    for (let e = 0; e < ENEMY_COUNT; e++) spawnEnemy();
+  }
 
   updateHpBar();
   updateAmmoDisplay();
@@ -1899,7 +1933,8 @@ function drawFlashlight() {
   octx.clearRect(0, 0, SCREEN_W, SCREEN_H);
 
   // Full dark cover
-  octx.fillStyle = 'rgba(0,0,0,0.91)';
+  const isMobile = window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+  octx.fillStyle = isMobile ? 'rgba(0,0,0,0.72)' : 'rgba(0,0,0,0.91)';
   octx.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
   // Cut out raycasted cone using destination-out
@@ -1908,11 +1943,19 @@ function drawFlashlight() {
 
   // Radial gradient — more diffuse, faster falloff
   const grad = octx.createRadialGradient(sx, sy, 0, sx, sy, FLASHLIGHT_RANGE);
-  grad.addColorStop(0,    'rgba(255,255,255,0.92)');
-  grad.addColorStop(0.25, 'rgba(255,255,255,0.75)');
-  grad.addColorStop(0.55, 'rgba(255,255,255,0.35)');
-  grad.addColorStop(0.78, 'rgba(255,255,255,0.12)');
-  grad.addColorStop(1.0,  'rgba(255,255,255,0)');
+  if (isMobile) {
+    grad.addColorStop(0,    'rgba(255,255,255,1.0)');
+    grad.addColorStop(0.30, 'rgba(255,255,255,0.92)');
+    grad.addColorStop(0.60, 'rgba(255,255,255,0.60)');
+    grad.addColorStop(0.82, 'rgba(255,255,255,0.25)');
+    grad.addColorStop(1.0,  'rgba(255,255,255,0)');
+  } else {
+    grad.addColorStop(0,    'rgba(255,255,255,0.92)');
+    grad.addColorStop(0.25, 'rgba(255,255,255,0.75)');
+    grad.addColorStop(0.55, 'rgba(255,255,255,0.35)');
+    grad.addColorStop(0.78, 'rgba(255,255,255,0.12)');
+    grad.addColorStop(1.0,  'rgba(255,255,255,0)');
+  }
 
   octx.fillStyle = grad;
   octx.beginPath();
@@ -2107,6 +2150,13 @@ document.addEventListener('contextmenu', e => e.preventDefault());
       if (mx >= rr.left && mx <= rr.right && my >= rr.top && my <= rr.bottom) {
         startReload(); continue;
       }
+      // Shoot button
+      const sr = document.getElementById('shoot-btn').getBoundingClientRect();
+      if (mx >= sr.left && mx <= sr.right && my >= sr.top && my <= sr.bottom) {
+        shoot();
+        document.getElementById('shoot-btn').classList.add('pressed');
+        continue;
+      }
     }
   }
 
@@ -2152,12 +2202,13 @@ document.addEventListener('contextmenu', e => e.preventDefault());
         joy.move.active = false; joy.move.dx = 0; joy.move.dy = 0;
         updateKnob('knob-move', 0, 0);
       }
-      // Look joystick released — fire!
+      // Look joystick released
       if (joy.look.active && t.identifier === joy.look.id) {
         joy.look.active = false; joy.look.dx = 0; joy.look.dy = 0;
         updateKnob('knob-look', 0, 0);
-        shoot();
       }
+      // Remove shoot button pressed state
+      document.getElementById('shoot-btn').classList.remove('pressed');
     }
   }
 
@@ -2587,6 +2638,21 @@ function restartGame() {
 }
 
 // ─── START ────────────────────────────────────────────────────────────────────
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreen-btn');
+  if (btn) btn.textContent = document.fullscreenElement ? '⊠ EXIT' : '⛶ FULL';
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  const btn = document.getElementById('fullscreen-btn');
+  if (btn) btn.textContent = document.fullscreenElement ? '⊠ EXIT' : '⛶ FULL';
+});
 function scaleGame() {
   const scaleX = window.innerWidth  / 600;
   const scaleY = window.innerHeight / 400;
